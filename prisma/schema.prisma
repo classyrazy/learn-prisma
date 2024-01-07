@@ -1,0 +1,31 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        String   @id @default(uuid())
+    firstName String
+    lastName  String
+    age       Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    HouseOwned     House[] @relation("HouseOwner") 
+    HouseBuilt     House[] @relation("HouseBuiltBy")
+
+}
+
+model House {
+    id        String   @id @default(uuid())
+    address   String   @unique
+    owner     User     @relation("HouseOwner", fields: [ownerId], references: [id]) // Relation fields must be specified for to-one relations and add label to differentiatate the two references to the User model
+    ownerId   String
+    builtBy   User     @relation("HouseBuiltBy", fields: [builtById], references: [id])
+    builtById String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
